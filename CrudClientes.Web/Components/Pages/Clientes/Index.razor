@@ -5,7 +5,20 @@
 {
     <div class="container">
         <h4>Registrar nuevo cliente</h4>
-
+        <EditForm  Model="@Request" FormName="clienteForm">
+            <DataAnnotationsValidator/>
+            <div class="mt-2">
+                <label class="form-label">Nombre:</label>
+                <input 
+                    class="form-control"
+                    @bind="Request.Nombre"
+                    type="text"/>
+                <ValidationMessage For="()=>Request.Nombre"/>
+            </div>
+            <div class="mt-2">
+                <input type="submit" value="Guardar" />
+            </div>
+        </EditForm>
     </div>
 }
 else
@@ -58,7 +71,8 @@ else
     </table>
 }
 @code {
-    public bool ShowForm { get; set; }
+    public bool ShowForm { get; set; } = true;
+    public ClienteDto Request { get; set; } = new();
 
     public string Filtro { get; set; } = string.Empty;
     public List<ClienteDto> Listado { get; set; } = [];
