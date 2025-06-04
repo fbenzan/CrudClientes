@@ -21,5 +21,6 @@
         public string? Direccion { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         public bool Activo { get; set; } = true;
+
     }
 }
