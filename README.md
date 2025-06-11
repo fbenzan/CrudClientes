@@ -112,12 +112,6 @@ Antes de usar los comandos de migración, asegúrate de tener instalada la herra
 
 ```bash
 dotnet tool install --global dotnet-ef
-
-### Comandos de Migración
-
-**Crear una nueva migración:**
-```bash
-dotnet ef migrations add NombreDeLaMigracion
 ```
 
 **Aplicar migraciones a la base de datos:**
