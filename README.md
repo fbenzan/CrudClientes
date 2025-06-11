@@ -1,4 +1,4 @@
-﻿# Práctica de CRUD - Gestión de Clientes
+# Práctica de CRUD - Gestión de Clientes
 
 ## Consigna
 
@@ -106,12 +106,20 @@ ClientesCrud/
 - Usar ConfigureAwait(true) en llamadas async
 
 ## Notas Técnicas - Entity Framework
+
 ### 🔧 Instalación de la herramienta CLI de EF Core
 
 Antes de usar los comandos de migración, asegúrate de tener instalada la herramienta `dotnet-ef` globalmente:
 
 ```bash
 dotnet tool install --global dotnet-ef
+```
+
+### Comandos de Migración
+
+**Crear una nueva migración:**
+```bash
+dotnet ef migrations add NombreDeLaMigracion
 ```
 
 **Aplicar migraciones a la base de datos:**
