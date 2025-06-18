@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace CrudClientes.Web.Data.Entities;
 [Table("Clientes")]
 public class Cliente
