@@ -1,23 +1,43 @@
 ﻿@page "/clientes"
+@rendermode InteractiveServer
+@inject ILogger<Clientes.Index> Logger
 
 <h3>Clientes <span class="btn btn-success"> + </span></h3>
 @if (ShowForm)
 {
     <div class="container">
         <h4>Registrar nuevo cliente</h4>
-        <EditForm  Model="@Request" FormName="clienteForm">
+        <EditForm FormName="clienteForm" Model="@Request" OnValidSubmit="Guardar">
             <DataAnnotationsValidator/>
+            <ValidationSummary/>
             <div class="mt-2">
                 <label class="form-label">Nombre:</label>
-                <input 
-                    class="form-control"
-                    @bind="Request.Nombre"
-                    type="text"/>
+                <input class="form-control" @bind="Request.Nombre"/>
                 <ValidationMessage For="()=>Request.Nombre"/>
             </div>
             <div class="mt-2">
-                <input type="submit" value="Guardar" />
+                <label class="form-label">Email:</label>
+                <input class="form-control" @bind="Request.Email" />
+                <ValidationMessage For="() => Request.Email" />
             </div>
+
+            <div class="mt-2">
+                <label class="form-label">Teléfono:</label>
+                <input class="form-control" @bind="Request.Telefono" />
+                <ValidationMessage For="() => Request.Telefono" />
+            </div>
+
+            <div class="mt-2">
+                <label class="form-label">Dirección:</label>
+                <textarea class="form-control" @bind="Request.Direccion" />
+            </div>
+
+            <div class="mt-2 mb-2">
+                <label class="form-label">Activo:</label>
+                <InputCheckbox class="form-check" @bind-Value="Request.Activo" />
+            </div>
+
+            <button class="btn btn-success" type="submit">Ok</button>
         </EditForm>
     </div>
 }
@@ -80,5 +100,12 @@ else
     /// Metodo para consultar los clientes
     /// </summary>
     /// <returns></returns>
-    private async Task Consultar() { }
+    private async Task Consultar() {  }
+
+    private async Task Guardar() { 
+        Logger.LogInformation("Guardando cliente: {@Cliente}", System.Text.Json.JsonSerializer.Serialize(Request));
+        // Aquí se llamaría al servicio para guardar el cliente
+        // Por ejemplo: await _clienteService.GuardarAsync(Request);
+        ShowForm = false; // Ocultar el formulario después de guardar
+     }
 }
