@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CrudClientes.Web.Data.Dtos;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrudClientes.Web.Data.Entities;
@@ -18,4 +19,15 @@ public class Cliente
     public string? Direccion { get; set; }
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
     public bool Activo { get; set; } = true;
+
+    internal static Cliente Crear(ClienteDto clienteDto)
+    => new()
+    {
+        Nombre = clienteDto.Nombre,
+        Email = clienteDto.Email,
+        Direccion = clienteDto.Direccion,
+        Telefono = clienteDto.Telefono,
+        FechaCreacion = DateTime.Now,
+        Activo = clienteDto.Activo
+    };
 }
