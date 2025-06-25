@@ -62,7 +62,6 @@ public class ClienteServices(ApplicationDbContext db) : IClienteServices
         var clientesQuery = db.Clientes
             .AsNoTracking()
             .Where(c =>
-            c.Nombre.Contains(filtro) ||
             (c.Telefono != null && c.Telefono.Contains(filtro)) ||
             (c.Direccion != null && c.Direccion.Contains(filtro)) ||
             c.Email.Contains(filtro)
