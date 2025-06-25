@@ -26,9 +26,52 @@ public class Cliente
     {
         Nombre = clienteDto.Nombre,
         Email = clienteDto.Email,
-        Telefono = clienteDto.Telefono,
         Direccion = clienteDto.Direccion,
+        Telefono = clienteDto.Telefono,
         FechaCreacion = DateTime.Now,
         Activo = clienteDto.Activo
+    };
+
+    internal bool Modificar(ClienteDto clienteDto)
+    {
+        var changed = false;
+        if(Nombre != clienteDto.Nombre)
+        {
+            Nombre = clienteDto.Nombre;
+            changed = true;
+        }
+        if (Telefono != clienteDto.Telefono)
+        {
+            Telefono = clienteDto.Telefono;
+            changed = true;
+        }
+        if (Direccion != clienteDto.Direccion)
+        {
+            Direccion = clienteDto.Direccion;
+            changed = true;
+        }
+        if (Email != clienteDto.Email)
+        {
+            Email = clienteDto.Email;
+            changed = true;
+        }
+        if(Activo != clienteDto.Activo)
+        {
+            Activo = clienteDto.Activo;
+            changed = true;
+        }
+        return changed;
+    }
+
+    internal ClienteDto ToDto()
+    =>new ()
+    {
+        Id = Id,
+        Nombre = Nombre,
+        Email = Email,
+        Direccion = Direccion,
+        Telefono = Telefono,
+        FechaCreacion = DateTime.Now,
+        Activo = Activo
     };
 }

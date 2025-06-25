@@ -68,7 +68,7 @@ else
                     <tr>
                         <th scope="row">
                             <div class="btn-group">
-                                <span class="btn btn-outline-warning">Editar</span>
+                                <span class="btn btn-outline-warning" @onclick="()=>SetCliente(cliente)">Editar</span>
                                 <span class="btn btn-outline-danger">Eliminar</span>
                             </div>
                         </th>
@@ -91,21 +91,54 @@ else
     </table>
 }
 @code {
-    public bool ShowForm { get; set; } = true;
+    public bool ShowForm { get; set; } = false;
     public ClienteDto Request { get; set; } = new();
 
     public string Filtro { get; set; } = string.Empty;
     public List<ClienteDto> Listado { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Consultar();
+    }
+
     /// <summary>
     /// Metodo para consultar los clientes
     /// </summary>
     /// <returns></returns>
-    private async Task Consultar() {  }
+    private async Task Consultar()
+    {
+        Listado = clienteServices.Consultar("");
+        StateHasChanged();
+    }
+
+    void SetCliente(ClienteDto dto)
+    {
+        Request = dto;
+        ShowForm = true;
+    }
 
     private async Task Guardar() { 
         Logger.LogInformation("Guardando cliente: {@Cliente}", System.Text.Json.JsonSerializer.Serialize(Request));
         // Aquí se llamaría al servicio para guardar el cliente
         // Por ejemplo: await _clienteService.GuardarAsync(Request);
-        ShowForm = false; // Ocultar el formulario después de guardar
-     }
+        if(Request.Id == 0)
+        {
+            var registrado = clienteServices.Crear(Request);
+            if (registrado)
+            {
+                ShowForm = false; // Ocultar el formulario después de guardar
+                await Consultar();
+            }
+        }
+        else
+        {
+            var (registrado, message) = clienteServices.Modificar(Request);
+            if (registrado)
+            {
+                ShowForm = false; // Ocultar el formulario después de guardar
+                await Consultar();
+            }
+        }
+    }
 }
