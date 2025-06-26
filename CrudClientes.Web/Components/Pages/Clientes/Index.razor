@@ -1,8 +1,9 @@
 ﻿@page "/clientes"
 @rendermode InteractiveServer
 @inject ILogger<Clientes.Index> Logger
+@inject IJSRuntime JS;
 
-<h3>Clientes <span class="btn btn-success"> + </span></h3>
+<h3 class="d-print-none">Clientes <span class="btn btn-success" @onclick="NuevoRegistro"> + </span></h3>
 @if (ShowForm)
 {
     <div class="container">
@@ -38,22 +39,34 @@
             </div>
 
             <button class="btn btn-success" type="submit">Ok</button>
+            <button @onclick="()=>{ ShowForm = false; }" class="btn btn-danger" type="button">Cancelar</button>
         </EditForm>
     </div>
 }
 else
 {
-    <div class="input-group mb-3">
+    <div class="input-group mb-3 d-print-none">
       <span class="input-group-text" id="basic-addon1">Busqueda</span>
       <input @bind="Filtro" type="text" class="form-control" placeholder="Escribe el dato a consultar" aria-label="filtro" aria-describedby="basic-addon1">
         <span @onclick="Consultar" class="btn btn-outline-success" >
             Buscar
       </span>
     </div>
+    <div class="mb-3 d-print-none">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" @bind="SoloActivos" id="checkDefault">
+            <label class="form-check-label" for="checkDefault">
+                Solo activos
+            </label>
+        </div>
+        <button class="btn btn-primary d-print-none mb-2" @onclick="Imprimir">Imprimir</button>
+
+    </div>
+    <h1 class="d-none d-print-block">Reporte de clientes</h1>
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">...</th>
+                <th scope="col" class="d-print-none">...</th>
                 <th scope="col">Código</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Teléfono</th>
@@ -66,10 +79,10 @@ else
                 @foreach (var cliente in Listado)
                 {
                     <tr>
-                        <th scope="row">
+                        <th scope="row" class="d-print-none">
                             <div class="btn-group">
                                 <span class="btn btn-outline-warning" @onclick="()=>SetCliente(cliente)">Editar</span>
-                                <span class="btn btn-outline-danger">Eliminar</span>
+                                <span @onclick="()=>Eliminar(cliente)" class="btn btn-outline-danger">Eliminar</span>
                             </div>
                         </th>
                         <th>@cliente.Id</th>
@@ -92,6 +105,7 @@ else
 }
 @code {
     public bool ShowForm { get; set; } = false;
+    public bool SoloActivos { get; set; } = true;
     public ClienteDto Request { get; set; } = new();
 
     public string Filtro { get; set; } = string.Empty;
@@ -101,14 +115,31 @@ else
     {
         await Consultar();
     }
+    private void NuevoRegistro()
+    {
+        ShowForm = true;
+        Request = new();
+    }
+    private async Task Eliminar(ClienteDto dto)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirmar", $"¿Está seguro que desea eliminar el cliente '{dto.Nombre}'?");
+        if (!confirmado)
+            return;
 
+        var (eliminado, mensaje) = clienteServices.Eliminar(dto.Id);
+        await JS.InvokeVoidAsync("alerta", mensaje);
+        if (eliminado)
+        {
+            await Consultar();
+        }
+    }
     /// <summary>
     /// Metodo para consultar los clientes
     /// </summary>
     /// <returns></returns>
     private async Task Consultar()
     {
-        Listado = clienteServices.Consultar("");
+        Listado = clienteServices.Consultar(Filtro, SoloActivos);
         StateHasChanged();
     }
 
@@ -117,7 +148,10 @@ else
         Request = dto;
         ShowForm = true;
     }
-
+    private async Task Imprimir()
+    {
+        await JS.InvokeVoidAsync("imprimir");
+    }
     private async Task Guardar() { 
         Logger.LogInformation("Guardando cliente: {@Cliente}", System.Text.Json.JsonSerializer.Serialize(Request));
         // Aquí se llamaría al servicio para guardar el cliente
@@ -129,11 +163,13 @@ else
             {
                 ShowForm = false; // Ocultar el formulario después de guardar
                 await Consultar();
+                await JS.InvokeVoidAsync("alerta", "Registrado exitosamente");
             }
         }
         else
         {
             var (registrado, message) = clienteServices.Modificar(Request);
+            await JS.InvokeVoidAsync("alerta", message);
             if (registrado)
             {
                 ShowForm = false; // Ocultar el formulario después de guardar
