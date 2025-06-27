@@ -1,7 +1,11 @@
-﻿window.confirmarEliminacion = function (mensaje) {
+﻿window.confirmar = function (mensaje) {
     return confirm(mensaje);
 }
 
-window.imprimirPagina = function () {
+window.imprimir = function () {
     window.print();
+}
+
+window.alerta = function (mensaje) {
+    alert(mensaje);
 }
